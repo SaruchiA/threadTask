@@ -16,7 +16,7 @@ namespace threadTask
         //    get { return _URLlist; }            
             
         //}
-        WebClient webClient; //= new WebClient();
+        WebClient webClient= new WebClient();
         public multipleOpeartions()
         {
             _URLlist.AddRange(File.ReadAllLines(@"C:\Users\Saruchi\Desktop\daily dump\Threads exericse\test.txt"));
