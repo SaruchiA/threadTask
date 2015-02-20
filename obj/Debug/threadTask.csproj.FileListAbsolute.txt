@@ -1,0 +1,5 @@
+D:\Users\Saruchi\Documents\GitHub\threadTask\bin\Debug\threadTask.exe
+D:\Users\Saruchi\Documents\GitHub\threadTask\bin\Debug\threadTask.pdb
+D:\Users\Saruchi\Documents\GitHub\threadTask\obj\Debug\threadTask.csprojResolveAssemblyReference.cache
+D:\Users\Saruchi\Documents\GitHub\threadTask\obj\Debug\threadTask.exe
+D:\Users\Saruchi\Documents\GitHub\threadTask\obj\Debug\threadTask.pdb
