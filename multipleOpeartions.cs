@@ -23,7 +23,7 @@ namespace threadTask
 
         static void Main(string[] args)
         {
-            new multipleOpeartions().downloadFiles();    //is it ok to have a main here and create an instance of the same class itself here??!
+            new multipleOpeartions().spawnThreads();    //is it ok to have a main here and create an instance of the same class itself here??!
         }
 
         public void spawnThreads()
@@ -45,26 +45,34 @@ namespace threadTask
  
         }
 
-        public void downloadFiles()
-        {           
-            
-
-            while (URLqueue.Any())
+        public bool downloadFiles()
+        {
+            try
             {
-                lock (URLqueue)
+
+                while (URLqueue.Any())
                 {
-                    var nextItem = URLqueue.Dequeue();
-                    webClient.DownloadFile (new Uri(nextItem), nextItem.Substring(nextItem.LastIndexOf('/') + 1));
+                    object _lock = new object();
+                    lock (_lock)
+                    {
+                        var nextItem = URLqueue.Dequeue();
+                        webClient.DownloadFile(new Uri(nextItem), nextItem.Substring(nextItem.LastIndexOf('/') + 1)) ;
+                    }
                 }
+            }//end try
+            catch(IOException)
+            {
+                return true;
             }
+            return false;
             
         }
 
         
 
 
-    }
-}
+    } //end class
+}// end namespace
 
 
 #region commentedOutSection
