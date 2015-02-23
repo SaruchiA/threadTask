@@ -12,30 +12,29 @@ namespace threadTask
     class multipleOpeartions
     {
         private List<String> _URLlist = new List<string>();     
-       // WebClient webClient= new WebClient();      
-       
+        WebClient webClient= new WebClient();
+        Queue<string> URLqueue;
 
         public multipleOpeartions()
         {
             _URLlist.AddRange(File.ReadAllLines(@"C:\Users\Saruchi\Desktop\daily dump\Threads exericse\test.txt"));
+             URLqueue = new Queue<string> (_URLlist); 
         }
 
         static void Main(string[] args)
         {
-            new multipleOpeartions().spawnThreads ();    //is it ok to have a main here and create an instance of the same class itself ??!
-            Console.ReadLine();
+            new multipleOpeartions().downloadFiles();    //is it ok to have a main here and create an instance of the same class itself here??!
         }
 
         public void spawnThreads()
         {
-                Thread t1 = new Thread(new ThreadStart ( downloadFiles));
-                Thread t2 = new Thread(new ThreadStart (downloadFiles));
-
-               // Thread t3 = new Thread(new multipleOpeartions().downloadFiles);
+                Thread t1 = new Thread(new multipleOpeartions().downloadFiles);
+                Thread t2 = new Thread(new multipleOpeartions().downloadFiles);
+                Thread t3 = new Thread(new multipleOpeartions().downloadFiles);
 
                 t1.Start();
                 t2.Start();
-               // t3.Start();
+                t3.Start();
 
                 //while (t1.IsAlive) ;
                 //t1.Abort();
@@ -47,94 +46,17 @@ namespace threadTask
         }
 
         public void downloadFiles()
-        {
-            int bytesProcessed = 0;
-
-            Stream remoteStream = null;
-            Stream localStream = null;
-            WebResponse response = null;
-            try
-  {
-    // Create a request for the specified remote file name
-
-      List<string> URLlist = new List<string>();
-      lock (URLlist)
-      {
-          URLlist.Add("http://static.isango.com/activitylocationmaps/12981.pdf");
-          URLlist.Add("http://static.isango.com/activitylocationmaps/13034.pdf");
-      }
-
-      foreach (String url in URLlist)
-      {
-          WebRequest request = WebRequest.Create(url);
-
-          if (request != null)
-          {
-              // Send the request to the server and retrieve the
-              // WebResponse object 
-              response = request.GetResponse();
-              if (response != null)
-              {
-                  // Once the WebResponse object has been retrieved,
-                  // get the stream object associated with the response's data
-                  remoteStream = response.GetResponseStream();
-
-                  lock (localStream)
-                  {
-                      localStream = File.Create(url.Substring (url.LastIndexOf('/') ));
-                  }
-                  // Allocate a 1k buffer
-                  byte[] buffer = new byte[1024];
-                  int bytesRead;
-
-                  // Simple do/while loop to read from stream until
-                  // no bytes are returned
-                  do
-                  {
-
-                      bytesRead = remoteStream.Read(buffer, 0, buffer.Length);
-
-                      localStream.Write(buffer, 0, bytesRead);
-
-
-                      bytesProcessed += bytesRead;
-                  } while (bytesRead > 0);
-              }
-          }
-      }// end foreach
-  }
-  catch(Exception e)
-  {
-    Console.WriteLine(e.Message);
-  }
-  finally
-  {
-    // Close the response and streams objects here 
-    // to make sure they're closed even if an exception
-    // is thrown at some point
-    if (response     != null) response.Close();
-    if (remoteStream != null) remoteStream.Close();
-    if (localStream  != null) localStream.Close();
-  }
-
-  // Return total bytes processed to caller.
- 
-}
-            //Queue<string> URLqueue = new Queue<string>();
-            //lock (URLqueue)
-            //{
-            //    URLqueue.Enqueue("http://static.isango.com/activitylocationmaps/12981.pdf");
-            //    URLqueue.Enqueue("http://static.isango.com/activitylocationmaps/13034.pdf");
-            //}
+        {           
             
-            //   while (URLqueue.Any())
-            //    {
-            //        lock (URLqueue)
-            //        {
-            //            var nextItem = URLqueue.Dequeue();
-            //            webClient.DownloadDataAsync(new Uri(nextItem), nextItem.Substring(nextItem.LastIndexOf('/') + 1));
-            //        }
-            //    }
+
+            while (URLqueue.Any())
+            {
+                lock (URLqueue)
+                {
+                    var nextItem = URLqueue.Dequeue();
+                    webClient.DownloadFile (new Uri(nextItem), nextItem.Substring(nextItem.LastIndexOf('/') + 1));
+                }
+            }
             
         }
 
@@ -142,7 +64,7 @@ namespace threadTask
 
 
     }
-
+}
 
 
 #region commentedOutSection
